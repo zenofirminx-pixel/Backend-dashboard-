@@ -1,4 +1,9 @@
 export default async function handler(req, res) {
+  console.log("BOT_TOKEN:", process.env.BOT_TOKEN ? "OK" : "MISSING");
+
+  // reste du code...
+}
+export default async function handler(req, res) {
   try {
     if (req.method !== "POST") {
       return res.status(200).send("OK");
