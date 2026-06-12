@@ -1,53 +1,56 @@
 export default async function handler(req, res) {
   try {
-
-    // 🔥 DEBUG (visible dans Vercel logs)
     console.log("🔥 WEBHOOK HIT");
-    console.log("BOT_TOKEN:", process.env.BOT_TOKEN ? "OK" : "MISSING");
 
-    // Telegram webhook = POST only
     if (req.method !== "POST") {
       return res.status(200).send("OK");
     }
 
     const update = req.body;
-
     const message = update.message;
+
     if (!message || !message.text) {
       return res.status(200).send("no message");
     }
 
     const chatId = message.chat.id;
-    const text = message.text;
+    const text = message.text.toLowerCase();
 
-    console.log("USER:", text);
+    let reply = "";
 
-    // 🤖 CALL AURX BACKEND
-    const aurxRes = await fetch("https://aur-x-backend.vercel.app/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        message: text,
-        userId: chatId
-      })
-    });
+    if (
+      text.includes("/start") ||
+      text.includes("aurx") ||
+      text.includes("ia") ||
+      text.includes("assistant")
+    ) {
+      reply =
+`🤖 Bienvenue sur AurX !
 
-    let aurxData = {};
+AurX est une intelligence artificielle accessible directement depuis ton navigateur.
 
-    try {
-      aurxData = await aurxRes.json();
-    } catch (e) {
-      console.log("AURX JSON ERROR:", e);
+🚀 Fonctionnalités :
+• Conversations IA
+• Mémoire intelligente
+• Réponses rapides
+• Interface moderne
+• Installation comme une application
+
+📲 Télécharger AurX :
+https://aurx.vercel.app
+
+Clique sur le lien puis choisis "Ajouter à l'écran d'accueil" pour l'installer.`;
+    } else {
+      reply =
+`👋 Je suis le bot officiel AurX.
+
+📲 Télécharge AurX ici :
+https://aurx.vercel.app
+
+Une fois installé, tu pourras discuter directement avec l'IA.`;
     }
 
-    console.log("AURX RESPONSE:", aurxData);
-
-    const reply = aurxData.reply || aurxData.message || "AurX vide";
-
-    // 📤 SEND MESSAGE TO TELEGRAM
-    const telegramRes = await fetch(
+    await fetch(
       `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`,
       {
         method: "POST",
@@ -61,17 +64,13 @@ export default async function handler(req, res) {
       }
     );
 
-    const telegramData = await telegramRes.json();
-    console.log("TELEGRAM RESPONSE:", telegramData);
-
     return res.status(200).json({ ok: true });
 
   } catch (error) {
-    console.log("ERROR:", error);
+    console.error(error);
 
     return res.status(200).json({
-      ok: false,
-      error: "handled error"
+      ok: false
     });
   }
 }
