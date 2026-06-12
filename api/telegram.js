@@ -1,6 +1,6 @@
 export default async function handler(req, res) {
 try {
-console.log("🔥 TELEGRAM WEBHOOK HIT");
+console.log("🤖 AurX Telegram Webhook");
 
 if (req.method !== "POST") {
   return res.status(200).send("OK");
@@ -9,8 +9,8 @@ if (req.method !== "POST") {
 const BOT_TOKEN = process.env.BOT_TOKEN;
 
 if (!BOT_TOKEN) {
-  console.log("❌ BOT_TOKEN MISSING");
-  return res.status(200).json({ ok: false });
+  console.log("❌ BOT_TOKEN manquant");
+  return res.status(500).json({ error: "BOT_TOKEN missing" });
 }
 
 const update = req.body;
@@ -23,139 +23,160 @@ if (!message || !message.text) {
 const chatId = message.chat.id;
 const text = message.text.toLowerCase().trim();
 
-console.log("👤 USER:", text);
+console.log("👤 Message reçu :", text);
 
 let reply = "";
 
-// FR
-if (
-  text.includes("bonjour") ||
-  text.includes("salut") ||
-  text.includes("bonsoir")
-) {
-  const responses = [
-    `👋 Bienvenue sur AurX !
+// START
+if (text === "/start") {
+  const starts = [
+
+`👋 Bienvenue sur AurX !
 
 Je suis le bot officiel d'AurX.
 
-Souhaitez-vous utiliser l'application AurX ?
+🤖 AurX est une intelligence artificielle moderne capable de répondre aux questions, d'aider à apprendre et d'accompagner les utilisateurs dans leurs projets.
 
-🚀 Accéder à AurX :
+🚀 Utiliser AurX :
 https://aurx.vercel.app
 
-AurX peut être installé directement sur votre téléphone ou ordinateur.`,
+Vous pouvez l'utiliser directement depuis votre navigateur ou l'installer comme une application.`,
 
-    `🤖 Bonjour !
+`🚀 Bienvenue !
 
-Merci de votre intérêt pour AurX.
+Je représente officiellement AurX.
 
-AurX est une intelligence artificielle moderne conçue pour répondre à vos questions et vous assister au quotidien.
+AurX est un assistant IA conçu pour fournir des réponses intelligentes, aider à la recherche et accompagner les utilisateurs au quotidien.
 
-📲 Ouvrir AurX :
-https://aurx.vercel.app`
+🌍 Accéder à AurX :
+https://aurx.vercel.app
+
+Merci de votre visite et bonne découverte !`
 ];
 
-  reply = responses[Math.floor(Math.random() * responses.length)];
+  reply = starts[Math.floor(Math.random() * starts.length)];
 }
 
-// EN
+// INSTALLATION
 else if (
-  text.includes("hello") ||
-  text.includes("hi") ||
-  text.includes("hey")
-) {
-  const responses = [
-    `👋 Welcome to AurX!
-
-I am the official AurX bot.
-
-Would you like to try the AurX application?
-
-🚀 Launch AurX:
-https://aurx.vercel.app`,
-
-    `🤖 Hello!
-
-AurX is an AI assistant available directly from your browser.
-
-📲 Open AurX:
-https://aurx.vercel.app`
-];
-
-  reply = responses[Math.floor(Math.random() * responses.length)];
-}
-
-// Download / Install
-else if (
-  text.includes("download") ||
   text.includes("install") ||
+  text.includes("installer") ||
+  text.includes("download") ||
+  text.includes("télécharger") ||
   text.includes("app") ||
   text.includes("application") ||
-  text.includes("télécharger")
+  text.includes("apk")
 ) {
   reply =
 
-`📲 Télécharger AurX
+`📲 Installer AurX
 
 1️⃣ Ouvrez :
 https://aurx.vercel.app
 
-2️⃣ Sur Android :
-Menu navigateur → Ajouter à l'écran d'accueil
+2️⃣ Android :
+Menu du navigateur → Ajouter à l'écran d'accueil
 
-3️⃣ Sur PC :
-Installer l'application depuis votre navigateur.
+3️⃣ PC :
+Cliquez sur Installer dans votre navigateur.
 
-🚀 AurX sera disponible comme une vraie application.`;
+AurX fonctionnera ensuite comme une application classique.`;
 }
 
-// About AurX
+// C'EST QUOI AURX ?
 else if (
   text.includes("aurx") ||
   text.includes("ai") ||
   text.includes("ia") ||
-  text.includes("assistant")
+  text.includes("assistant") ||
+  text.includes("chatbot") ||
+  text.includes("intelligence") ||
+  text.includes("what is") ||
+  text.includes("c'est quoi") ||
+  text.includes("qui es tu") ||
+  text.includes("who are you")
 ) {
-  reply =
+  const infos = [
 
-`🤖 AurX est une intelligence artificielle moderne.
+`🤖 Je suis le bot officiel d'AurX.
 
-Fonctionnalités :
+AurX est une intelligence artificielle moderne conçue pour répondre aux questions, expliquer des concepts et aider les utilisateurs dans leurs projets.
 
-• Réponses intelligentes
-• Conversations naturelles
-• Mémoire utilisateur
-• Interface moderne
-• Installation PWA
+🚀 Découvrir AurX :
+https://aurx.vercel.app`,
 
-🌍 Essayer AurX :
-https://aurx.vercel.app`;
+`🌍 AurX est une plateforme d'intelligence artificielle accessible directement depuis votre navigateur.
+
+Elle permet de discuter avec une IA moderne et de bénéficier d'une expérience proche d'une application native.
+
+📲 Essayer AurX :
+https://aurx.vercel.app`
+];
+
+  reply = infos[Math.floor(Math.random() * infos.length)];
 }
 
-// Default
+// BONJOUR / HELLO
+else if (
+  text.includes("bonjour") ||
+  text.includes("salut") ||
+  text.includes("bonsoir") ||
+  text.includes("hello") ||
+  text.includes("hi") ||
+  text.includes("hey")
+) {
+  const greetings = [
+
+`👋 Bonjour !
+
+Je suis le bot officiel d'AurX.
+
+Si vous souhaitez découvrir AurX, rendez-vous sur :
+
+https://aurx.vercel.app`,
+
+`🤖 Hello !
+
+Welcome to AurX.
+
+AurX is a modern AI assistant available directly from your browser.
+
+🚀 https://aurx.vercel.app`
+];
+
+  reply = greetings[Math.floor(Math.random() * greetings.length)];
+}
+
+// DEFAULT
 else {
   const defaults = [
-    `👋 Je suis le bot officiel d'AurX.
 
-📲 Utiliser AurX :
+`🤖 Je suis le bot officiel d'AurX.
+
+AurX est une intelligence artificielle moderne accessible depuis votre navigateur.
+
+🚀 Utiliser AurX :
 https://aurx.vercel.app`,
 
-    `🤖 Merci pour votre message.
+`👋 Merci pour votre message.
 
-Pour accéder à AurX :
+Pour découvrir AurX et commencer à utiliser l'IA :
+
 https://aurx.vercel.app`,
 
-    `🚀 AurX est disponible ici :
+`🚀 AurX vous attend.
+
+Accédez à l'application ici :
 
 https://aurx.vercel.app
 
-Essayez l'application directement depuis votre navigateur.`
+Je peux également vous expliquer comment l'installer.`
 ];
 
   reply = defaults[Math.floor(Math.random() * defaults.length)];
 }
 
-const telegramRes = await fetch(
+const telegramResponse = await fetch(
   `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
   {
     method: "POST",
@@ -169,19 +190,20 @@ const telegramRes = await fetch(
   }
 );
 
-const telegramData = await telegramRes.json();
+const telegramData = await telegramResponse.json();
 
-console.log("📤 TELEGRAM:", telegramData);
+console.log("📤 Telegram:", telegramData);
 
 return res.status(200).json({
   ok: true
 });
 
 } catch (error) {
-console.error("❌ ERROR:", error);
+console.error("❌ Erreur :", error);
 
 return res.status(200).json({
-  ok: false
+  ok: false,
+  error: error.message
 });
 
 }
