@@ -1,76 +1,94 @@
-export default async function handler(req, res) {
-  try {
-    console.log("🔥 WEBHOOK HIT");
+const FR_KEYWORDS = [
+"bonjour",
+"salut",
+"hello",
+"bonsoir",
+"aurx",
+"ia",
+"assistant",
+"application",
+"app",
+"télécharger",
+"download"
+];
 
-    if (req.method !== "POST") {
-      return res.status(200).send("OK");
-    }
+const EN_KEYWORDS = [
+"hi",
+"hello",
+"hey",
+"download",
+"app",
+"application",
+"ai",
+"assistant",
+"aurx"
+];
 
-    const update = req.body;
-    const message = update.message;
-
-    if (!message || !message.text) {
-      return res.status(200).send("no message");
-    }
-
-    const chatId = message.chat.id;
-    const text = message.text.toLowerCase();
-
-    let reply = "";
-
-    if (
-      text.includes("/start") ||
-      text.includes("aurx") ||
-      text.includes("ia") ||
-      text.includes("assistant")
-    ) {
-      reply =
+const replies = [
 `🤖 Bienvenue sur AurX !
 
-AurX est une intelligence artificielle accessible directement depuis ton navigateur.
+Je suis le bot officiel d'AurX.
 
-🚀 Fonctionnalités :
-• Conversations IA
-• Mémoire intelligente
-• Réponses rapides
-• Interface moderne
-• Installation comme une application
+AurX est une intelligence artificielle moderne accessible directement depuis votre navigateur.
 
-📲 Télécharger AurX :
+📲 Utiliser AurX :
 https://aurx.vercel.app
 
-Clique sur le lien puis choisis "Ajouter à l'écran d'accueil" pour l'installer.`;
-    } else {
-      reply =
-`👋 Je suis le bot officiel AurX.
+Ouvrez le lien puis ajoutez l'application à votre écran d'accueil pour une expérience complète.`,
 
-📲 Télécharge AurX ici :
+`🚀 Salut !
+
+Merci de votre intérêt pour AurX.
+
+AurX est conçu pour répondre à vos questions, vous aider à apprendre et vous accompagner dans vos projets.
+
+📱 Essayez AurX ici :
 https://aurx.vercel.app
 
-Une fois installé, tu pourras discuter directement avec l'IA.`;
-    }
+L'installation prend moins d'une minute.`,
 
-    await fetch(
-      `https://api.telegram.org/bot${process.env.BOT_TOKEN}/sendMessage`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: reply
-        })
-      }
-    );
+`✨ Bienvenue !
 
-    return res.status(200).json({ ok: true });
+Vous cherchez une IA simple, rapide et intelligente ?
 
-  } catch (error) {
-    console.error(error);
+AurX est disponible gratuitement depuis votre navigateur.
 
-    return res.status(200).json({
-      ok: false
-    });
-  }
+🔗 Accéder à AurX :
+https://aurx.vercel.app
+
+Une fois ouvert, vous pouvez l'installer comme une application classique.`,
+
+`🤖 Hello and welcome!
+
+You are currently talking to the official AurX assistant bot.
+
+AurX is an AI assistant available directly from your browser.
+
+📲 Launch AurX:
+https://aurx.vercel.app
+
+Open the link and install it on your device for the best experience.`,
+
+`🚀 Hi there!
+
+Looking for AurX AI?
+
+You can access the application here:
+
+https://aurx.vercel.app
+
+AurX works on Android, desktop and most modern browsers.`,
+
+`👋 Welcome to AurX!
+
+AurX is an intelligent AI assistant built to help users learn, create and explore ideas.
+
+🌍 Open AurX:
+https://aurx.vercel.app
+
+Thank you for supporting the project.`
+];
+
+function getRandomReply() {
+return replies[Math.floor(Math.random() * replies.length)];
 }
